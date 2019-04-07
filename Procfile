@@ -1,1 +1,1 @@
-web: python yeongja.py
+worker: python yeongja.py
