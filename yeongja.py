@@ -48,22 +48,22 @@ def parse_direct_mention(message_text):
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
 
-def get_data_from_naver():
+def get_data_from_naver(query):
     """
         네이버에서 현재 위치 기반 맛집 데이터를 가져옵니다.
     """
-    search_url = URL + parse.quote("맛집")
+    search_url = URL + parse.quote(query)
     html = urlopen(search_url)
     soup = BeautifulSoup(html, "html.parser")
     return soup
 
 
-def get_data_from_soup():
+def get_data_from_soup(query):
     """
         크롤링하여 가져온 맛집 데이터를 정재합니다.
     """
     try:
-        soup = get_data_from_naver()
+        soup = get_data_from_naver(query)
     except CrawlingError:
         raise
     script_text = soup.findAll('script')[2].get_text()
@@ -72,12 +72,12 @@ def get_data_from_soup():
     return data
 
 
-def get_res_list():
+def get_res_list(query):
     """
         상위 50개 맛집 리스트를 뽑습니다.
     """
-    data = get_data_from_soup()
-    res_list = data['businesses']['[query:맛집]']['items'][:30]
+    data = get_data_from_soup(query)
+    res_list = data['businesses']['[query:' + query + ']']['items'][:30]
     return res_list
 
 
@@ -86,17 +86,17 @@ def handle_command(command, channel):
         bot 명령을 실행합니다.
     """
     # 기본 응답은 사용자를 위한 도움말 텍스트
-    default_response = "저는 맛집 추천 봇 영자입니다. '맛집'을 찾아달라고 말해주세요!"
+    default_response = "저는 맛집 추천 봇 영자입니다. '지역명 맛집'을 찾아달라고 말해주세요!"
 
     # 주어진 명령을 찾아서 실행하고 응답으로 채움
     response = None
 
-    res_list = get_res_list()
-    res = random.choice(res_list)
-    print(res)
-
     if CALL_COMMAND.match(command):
-        response = "'" + res['name'] + "'" + "을 추천합니다. \n카테고리:" + res['category'] + "\n길찾기바로가기:" + res['routeUrl']
+        location = command.split('맛집')[0]
+        query = location + " 맛집"
+        res_list = get_res_list(query)
+        res = random.choice(res_list)
+        response = "'" + res['name'] + "'" + "을 추천합니다.\n카테고리:" + res['category'] + "\n길찾기바로가기:" + res['routeUrl']
 
     # if CALL_COMMAND.match(command):
     #     response = "오늘 " + res['category'] + " 어떠세요? (Y/N)"
