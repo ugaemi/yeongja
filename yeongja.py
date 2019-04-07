@@ -19,7 +19,7 @@ slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 yeongja_id = None
 
 RTM_READ_DELAY = 1  # RTM에서 읽기까지 1초 지연
-CALL_COMMAND = re.compile("맛집*")
+CALL_COMMAND = re.compile('맛집*')
 # BOOL_COMMAND = ['Y', 'y', 'N', 'n']
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 
@@ -91,7 +91,7 @@ def handle_command(command, channel):
     # 주어진 명령을 찾아서 실행하고 응답으로 채움
     response = None
 
-    if CALL_COMMAND.match(command):
+    if CALL_COMMAND.search(command):
         location = command.split('맛집')[0]
         query = location + " 맛집"
         res_list = get_res_list(query)
