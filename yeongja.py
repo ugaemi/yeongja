@@ -93,9 +93,10 @@ def handle_command(command, channel):
 
     res_list = get_res_list()
     res = random.choice(res_list)
+    print(res)
 
     if CALL_COMMAND.match(command):
-        response = res['name'] + "을 추천합니다."
+        response = "'" + res['name'] + "'" + "을 추천합니다. \n카테고리:" + res['category'] + "\n길찾기바로가기:" + res['routeUrl']
 
     # if CALL_COMMAND.match(command):
     #     response = "오늘 " + res['category'] + " 어떠세요? (Y/N)"
