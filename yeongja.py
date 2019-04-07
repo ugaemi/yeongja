@@ -3,15 +3,16 @@ import os
 import random
 import time
 import re
-from config import API_KEY, URL
+
 from urllib.request import urlopen
 from urllib import parse
 from bs4 import BeautifulSoup
 from slackclient import SlackClient
 
-# 슬랙 클라이언트를 인스턴스화
+from config import URL
 from custom_error import CrawlingError
 
+# 슬랙 클라이언트를 인스턴스화
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 # yeongja의 user ID : 값은 봇이 시작된 후에 할당됨
@@ -19,14 +20,15 @@ yeongja_id = None
 
 RTM_READ_DELAY = 1  # RTM에서 읽기까지 1초 지연
 CALL_COMMAND = re.compile("맛집*")
+# BOOL_COMMAND = ['Y', 'y', 'N', 'n']
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 
 
 def parse_bot_commands(slack_events):
     """
         명령을 찾기 위해 Slack RTM API에서 오는 이벤트 목록을 구문 분석합니다.
-        명령을 찾으면 명령과 채널의 튜플을 반환합니다.
-        명령이 없으면 None, None을 반환합니다.
+        명령을 찾으면 명령과 채널의 튜플을 반환합니다.
+        명령이 없으면 None, None을 반환합니다.
     """
     for event in slack_events:
         if event["type"] == "message" and not "subtype" in event:
@@ -89,10 +91,20 @@ def handle_command(command, channel):
     # 주어진 명령을 찾아서 실행하고 응답으로 채움
     response = None
 
+    res_list = get_res_list()
+    res = random.choice(res_list)
+
     if CALL_COMMAND.match(command):
-        res_list = get_res_list()
-        res = random.choice(res_list)
         response = res['name'] + "을 추천합니다."
+
+    # if CALL_COMMAND.match(command):
+    #     response = "오늘 " + res['category'] + " 어떠세요? (Y/N)"
+    #
+    # if command in ['Y', 'y']:
+    #     response = res['name'] + "을 추천합니다."
+    # elif command in ['N', 'n']:
+    #     res = random.choice(res_list)
+    #     response = "오늘 " + res['category'] + " 어떠세요? (Y/N)"
 
     # 응답을 채널에 다시 보냄
     slack_client.api_call(
