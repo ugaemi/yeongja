@@ -9,7 +9,7 @@ from urllib import parse
 from bs4 import BeautifulSoup
 from slackclient import SlackClient
 
-from config import URL
+from config import SEARCH_URL, DETAIL_URL
 from custom_error import CrawlingError
 
 # 슬랙 클라이언트를 인스턴스화
@@ -52,7 +52,7 @@ def get_data_from_naver(query):
     """
         네이버에서 현재 위치 기반 맛집 데이터를 가져옵니다.
     """
-    search_url = URL + parse.quote(query)
+    search_url = SEARCH_URL + parse.quote(query)
     html = urlopen(search_url)
     soup = BeautifulSoup(html, "html.parser")
     return soup
@@ -96,7 +96,8 @@ def handle_command(command, channel):
         query = location + " 맛집"
         res_list = get_res_list(query)
         res = random.choice(res_list)
-        response = "'" + res['name'] + "'" + "을 추천합니다.\n카테고리:" + res['category'] + "\n길찾기바로가기:" + res['routeUrl']
+        detail_url = DETAIL_URL + res['id']
+        response = "'" + res['name'] + "'" + "을 추천합니다.\n자세히 보기:" + detail_url
 
     # if CALL_COMMAND.match(command):
     #     response = "오늘 " + res['category'] + " 어떠세요? (Y/N)"
