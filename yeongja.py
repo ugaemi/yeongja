@@ -99,15 +99,6 @@ def handle_command(command, channel):
         detail_url = DETAIL_URL + res['id']
         response = "'" + res['name'] + "'" + "을 추천합니다.\n자세히 보기:" + detail_url
 
-    # if CALL_COMMAND.match(command):
-    #     response = "오늘 " + res['category'] + " 어떠세요? (Y/N)"
-    #
-    # if command in ['Y', 'y']:
-    #     response = res['name'] + "을 추천합니다."
-    # elif command in ['N', 'n']:
-    #     res = random.choice(res_list)
-    #     response = "오늘 " + res['category'] + " 어떠세요? (Y/N)"
-
     # 응답을 채널에 다시 보냄
     slack_client.api_call(
         "chat.postMessage",
