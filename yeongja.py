@@ -20,7 +20,6 @@ yeongja_id = None
 
 RTM_READ_DELAY = 1  # RTM에서 읽기까지 1초 지연
 CALL_COMMAND = re.compile('맛집*')
-# BOOL_COMMAND = ['Y', 'y', 'N', 'n']
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 
 
@@ -97,7 +96,7 @@ def handle_command(command, channel):
         res_list = get_res_list(query)
         res = random.choice(res_list)
         detail_url = DETAIL_URL + res['id']
-        response = "'" + res['name'] + "'" + "을 추천합니다.\n자세히 보기:" + detail_url
+        response = "'" + res['name'] + "'" + "을(를) 추천합니다.\n자세히 보기:" + detail_url
 
     # 응답을 채널에 다시 보냄
     slack_client.api_call(
